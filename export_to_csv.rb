@@ -2,6 +2,7 @@ require 'csv'
 require 'fileutils'
 require_relative 'convert_kit_migration'
 
+FileUtils.rm_rf("convert-kit")
 FileUtils.mkdir_p("convert-kit")
 
 def export_row(row, tag)
@@ -40,8 +41,10 @@ def row_headers
 
 end
 
+# Remove slashes from the filename
+# Map "* installed" to "* install" to match the old event names and new tagname
 def tag_name_to_filename(tag)
-  tag.gsub("/", " SLASH ")
+  tag.gsub("/", " SLASH ").gsub("installed", "install")
 end
 
 def export_tag_to_csv(tag)
@@ -49,8 +52,13 @@ def export_tag_to_csv(tag)
     output_csv << row_headers
 
     CSV.foreach("drip/subscribers.csv", headers: :first_row) do |row|
-    if row[6].include?(tag) || tag == "import-drip"
-        output_csv << export_row(row, tag)
+      if row[6].include?(tag) || tag == "import-drip"
+        if tag.include?("installed")
+          # Map "* installed" to "* install" to match the old event names and new tagname
+          output_csv << export_row(row, tag.gsub("installed", "install"))
+        else
+          output_csv << export_row(row, tag)
+        end
       end
     end
   end
