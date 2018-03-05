@@ -1,7 +1,7 @@
 Migration of subscribers to convert kit.
 
 1. x Add a import-drip tag
-2. Import all tags
+2. Import all tags - create_tags.rb
   - Skip Read tags
 3. Create CSV exports for each tag
   - Skip Read tags
