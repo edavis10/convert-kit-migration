@@ -14,6 +14,8 @@ class ConvertKitMigration
     tags.uniq!
     # Add our new tracking tag
     tags << "import-drip"
+    # Remove test tags
+    tags.reject! {|tag| tag.match(/\Atest\Z/) }
     # Remove visit tags
     tags.reject! {|tag| tag.include?("visit") }
     # Content upgrade with [ ]s
