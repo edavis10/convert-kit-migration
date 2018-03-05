@@ -1,6 +1,6 @@
 Migration of subscribers to convert kit.
 
-1. x Add a import-drip tag
+1. Add a import-drip tag
 2. Import all tags - create_tags.rb
   - Skip Read tags
 3. Create CSV exports for each tag
@@ -8,17 +8,7 @@ Migration of subscribers to convert kit.
 3. Create CSV exports for each campaign/sequence
   - Skip Read tags
 4. Import the import-drip CSV export which includes all subscribers
-5. Import each CSV file
-  - ??? add to sequences if the tag is for a sequence
-  - ??? make sure sequences' exclusions are correct
-
-
----
-  
-6. 
-2. Add all subs with a import-drip tag to CK
-4. Scrape CSV and add tags for each subscriber
-  * skip all read tags
-  * before adding any app tag, add an exclusion tag for that app JSON - exclude, etc
-5. Scrape CSV and add subscribers to each sequence based on their campaigns
-
+6. Import each CSV file
+  - add to sequences if the tag is for a sequence
+  - import-drip-completed-X if the file is for a sequence that they subs completed in Drip
+  - add tag like import-drip-completed-json-uninstall when importing the uninstall tags
