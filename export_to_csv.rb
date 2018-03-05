@@ -4,6 +4,8 @@ require_relative 'convert_kit_migration'
 
 FileUtils.rm_rf("convert-kit")
 FileUtils.mkdir_p("convert-kit")
+FileUtils.mkdir_p("convert-kit/by-tag")
+FileUtils.mkdir_p("convert-kit/by-sequence")
 
 def export_row(row, tag)
   [
@@ -24,7 +26,7 @@ def export_row(row, tag)
 end
 
 def row_headers
-  ["current_tag",
+  ["current_tag_or_sequence",
    "email",
    "timezone",
    "referrer",
@@ -48,7 +50,7 @@ def tag_name_to_filename(tag)
 end
 
 def export_tag_to_csv(tag)
-  tag_csv = CSV.open("convert-kit/#{tag_name_to_filename(tag)}.csv", "wb") do |output_csv|
+  tag_csv = CSV.open("convert-kit/by-tag/#{tag_name_to_filename(tag)}.csv", "wb") do |output_csv|
     output_csv << row_headers
 
     CSV.foreach("drip/subscribers.csv", headers: :first_row) do |row|
@@ -64,8 +66,28 @@ def export_tag_to_csv(tag)
   end
 end
 
+def export_sequence_to_csv(sequence)
+  sequence_csv = CSV.open("convert-kit/by-sequence/#{tag_name_to_filename(sequence)}.csv", "wb") do |output_csv|
+    output_csv << row_headers
+
+    CSV.foreach("drip/subscribers.csv", headers: :first_row) do |row|
+      if row[7].include?(sequence)
+        output_csv << export_row(row, sequence)
+      end
+    end
+  end
+end
+
+
+
 ConvertKitMigration.tags_from_drip.each do |tag|
-  puts tag
-  export_tag_to_csv(tag)
+ puts tag
+ export_tag_to_csv(tag)
+end
+
+
+ConvertKitMigration.sequences_from_drip.each do |sequence|
+ puts sequence
+ export_sequence_to_csv(sequence)
 end
 
