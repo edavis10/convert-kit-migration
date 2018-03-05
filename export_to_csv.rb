@@ -1,8 +1,6 @@
 require 'csv'
 require 'fileutils'
-
-tag = "import_drip"
-#tag = "A2C"
+require_relative 'convert_kit_migration'
 
 FileUtils.mkdir_p("convert-kit")
 
@@ -42,14 +40,19 @@ def row_headers
 
 end
 
-tag_csv = CSV.generate do |output_csv|
-  output_csv << row_headers
+def export_tag_to_csv(tag)
+  tag_csv = CSV.generate do |output_csv|
+    output_csv << row_headers
 
-  CSV.foreach("drip/subscribers.csv") do |row|
-    if row[6].include?(tag) || tag == "import_drip"
-      output_csv << export_row(row, tag)
+    CSV.foreach("drip/subscribers.csv") do |row|
+      if row[6].include?(tag) || tag == "import_drip"
+        output_csv << export_row(row, tag)
+      end
     end
   end
 end
 
-puts tag_csv
+ConvertKitMigration.tags_from_drip.each do |tag|
+
+  puts export_tag_to_csv(tag)
+end
