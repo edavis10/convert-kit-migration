@@ -1,4 +1,15 @@
+require 'rubygems'
+require 'bundler/setup'
+require 'dotenv/load'
+require 'pry'
 require 'csv'
+require 'convertkit'
+
+Convertkit.configure do |config|
+  config.api_secret = ENV["CONVERT_KIT_API_SECRET"]
+  config.api_key = ENV["CONVERT_KIT_API_KEY"]
+end
+
 
 # id,email,time_zone,status,created_at,confirmed_at,tags,campaign_names,referrer,landing_url,ip_address,lead_score,lifetime_value,user_id,ab_bucket,imported_at,json_shopify_domain,json_user_id,landing_page,medium,name,rci_shopify_domain,rci_user_id,rcn_shopify_domain,rcn_user_id,replies,seg_shopify_domain,seg_user_id,shopify_domain,source,sticky_shopify_domain,sticky_user_id,tag_0,tag_1,tags,utc_offset
 
@@ -31,5 +42,26 @@ class ConvertKitMigration
     tags.reject! {|tag| tag.include?("data-test") }
 
     return tags.sort
+  end
+
+  def self.create_missing_tags(tags_to_create)
+    client = Convertkit::Client.new
+    response = client.tags
+    if response.success?
+      current_tags = response.body["tags"].collect {|t| t["name"] }
+      if current_tags.empty?
+        raise
+      else
+        missing_tags = tags_to_create - current_tags
+        if missing_tags.empty?
+          # No-op: no tags needed
+        else
+          client.create_tags(missing_tags)
+        end
+      end
+    else
+      raise
+    end
+
   end
 end
