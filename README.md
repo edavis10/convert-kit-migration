@@ -1,21 +1,26 @@
 Migration of subscribers to convert kit.
 
-1. Add a import-drip tag
-2. Import all tags - create_tags.rb
-  - Skip Read tags
-3. Create CSV exports for each tag
-  - Skip Read tags
-3. Create CSV exports for each campaign/sequence
-  - Skip Read tags
-4. Import the import-drip CSV export which includes all subscribers
-6. Import each CSV file
-  - NO, drip has this data bad: -add to sequences if the tag is for a sequence-
-  - import-drip-completed-X if the file is for a sequence that they subs completed in Drip
-  JSON: onboarding complete and billing complete -> customer with import-drip-conpleted-drip-onboarding
+### Setup
 
-  - add tag like import-drip-completed-json-uninstall when importing the uninstall tags
-7. Import each campaign file from drip into CK
-  - import-drip-completed-X if the file is for a sequence that they subs completed in Drip
+1. Create `.env` file with your convert kit API key and secret
 
+```
+export CONVERT_KIT_API_KEY='...'
+export CONVERT_KIT_API_SECRET='...'
+```
 
-[x] uninstall and reinstall tags? - not tags in drip, events. Imported by export
+### Import process
+
+1. Add a import-drip tag to CK, useful to track the imported people
+2. Consider adding sequence exclusion tags for people who completed campaigns in Drip, that way they aren't emailed again when they are imported.
+3. Export your Drip account data
+  - All active subscribers, do not use the full **account** export as it's data is bad.
+  - Save to `drip/subscribers.csv`
+4. Import all tags to CK - `ruby create_tags.rb`
+  - Skip Read tags
+5. Create CSV exports for each tag and campaign/sequence - `ruby export_to_csv.rb`
+  - CSV files for CK are in `convert-kit/[by-tag or by-sequence]`
+6. Import the import-drip CSV export to CK which includes all subscribers (`convert-kit/by-tag/import-drip.csv`)
+7. Import each CSV file to CK for each sequence and tag you want to keep
+  - Bunch of manual work...
+
