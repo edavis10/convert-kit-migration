@@ -9,6 +9,13 @@ Migration of subscribers to convert kit.
   - Skip Read tags
 4. Import the import-drip CSV export which includes all subscribers
 6. Import each CSV file
-  - add to sequences if the tag is for a sequence
+  - NO, drip has this data bad: -add to sequences if the tag is for a sequence-
   - import-drip-completed-X if the file is for a sequence that they subs completed in Drip
+  JSON: onboarding complete and billing complete -> customer with import-drip-conpleted-drip-onboarding
+
   - add tag like import-drip-completed-json-uninstall when importing the uninstall tags
+7. Import each campaign file from drip into CK
+  - import-drip-completed-X if the file is for a sequence that they subs completed in Drip
+
+
+[x] uninstall and reinstall tags? - not tags in drip, events. Imported by export
